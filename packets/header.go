@@ -17,18 +17,18 @@ import (
 // 7 - Car Status
 
 type PacketHeader struct {
-	MPacketFormat  uint16  // 2018
-	MPacketVersion uint8   // Version of this packet type, all start from 1
-	MPacketID      uint8   // Identifier for the packet type, see below
-	MSessionUID    uint64  // Unique identifier for the session
-	MSessionTime   float32 // Session timestamp
-	// MFrameIdentifier uint  // Identifier for the frame the data was retrieved on
-	MPlayerCarIndex uint8 // Index of player's car in the array
+	PacketFormat    uint16  // 2018
+	PacketVersion   uint8   // Version of this packet type, all start from 1
+	PacketID        uint8   // Identifier for the packet type, see below
+	SessionUID      uint64  // Unique identifier for the session
+	SessionTime     float32 // Session timestamp
+	FrameIdentifier uint32  // Identifier for the frame the data was retrieved on
+	PlayerIndex     uint8   // Index of player's car in the array
 }
 
-func NewPacketHeader(buf []byte) PacketHeader {
+func NewPacketHeader(buffer []byte) PacketHeader {
 	var pack PacketHeader
-	r := bytes.NewReader(buf)
+	r := bytes.NewReader(buffer)
 	if err := binary.Read(r, binary.LittleEndian, &pack); err != nil {
 		log.Fatal(err)
 	}

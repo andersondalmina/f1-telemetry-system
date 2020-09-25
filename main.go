@@ -5,7 +5,8 @@ import (
 	"log"
 	"net"
 
-	"github.com/andersondalmina/f1-telemetry/packets"
+	"github.com/andersondalmina/f1-telemetry/persist"
+	"github.com/andersondalmina/f1-telemetry/services"
 )
 
 func main() {
@@ -21,27 +22,16 @@ func main() {
 	}
 	defer con.Close()
 
-	fmt.Println("Server started")
+	persist.CreateClient()
+	defer persist.CloseClient()
 
-	buf := make([]byte, 1289)
-
+	buffer := make([]byte, 1341)
 	for {
-		_, err := con.Read(buf)
+		_, err := con.Read(buffer)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// tp, err := NewTelemetryPack(buf)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-
-		header := packets.NewPacketHeader(buf)
-
-		if header.MPacketID == 6 {
-			teste := packets.NewPacketCarTelemetryData(buf)
-			fmt.Println(teste)
-		}
-		// fmt.Println(header)
+		services.ProcessPacket(buffer)
 	}
 }
